@@ -274,14 +274,9 @@ def test():
                         exit()
 
 
-
-
-
-
-
 cal_button = Button(root, text="Calibrate", command=calibration).pack()
 manual_button = Button(root, text="Manual Control", command=control).pack()
-test_button = Button(root, text="Test (Datalog)", command=test).pack()
+test_button = Button(root, text="Test (Datalogging)", command=test).pack()
 
 
 
