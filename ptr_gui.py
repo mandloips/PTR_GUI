@@ -1,7 +1,10 @@
+from faulthandler import disable
 from logging import exception
 import os
 import time
 import sys
+from tkinter import font
+from tkinter.font import Font
 import pigpio
 import threading
 import RPi.GPIO as GPIO
@@ -26,6 +29,12 @@ pi = pigpio.pi();
 root = Tk()
 root.title('PTR')
 # root.iconbitmap('c:/gui/codemy.ico')
+# root.option_add('*Font', 50)
+# root.geometry("200x150")
+desired_font = font.Font(size = 25)
+ 
+label = Label(root, text = "Hello World", font = desired_font)
+label.pack(padx = 5, pady = 5)
 
 #ESC Control Thread
 class EscControlThread(threading.Thread):
@@ -37,6 +46,7 @@ class EscControlThread(threading.Thread):
                 self.speed = 0
                 self.pi = pigpio.pi();
                 self.pi.set_servo_pulsewidth(ESC, self.speed)
+                self.not_exited = True
         def run(self):
                 print ("I'm Starting the motor (in 3 seconds), I hope its calibrated and armed, if not stop the testing")
                 time.sleep(3)
@@ -49,7 +59,7 @@ class EscControlThread(threading.Thread):
                 time.sleep(3)
 
                 # loop for increasing the speed
-                while self.speed < self.MAX_VALUE:
+                while self.speed < self.MAX_VALUE and self.not_exited:
                         self.speed += 1
                         self.pi.set_servo_pulsewidth(ESC, self.speed)
 
@@ -61,7 +71,7 @@ class EscControlThread(threading.Thread):
                 
                 
                 
-                while self.speed > self.MIN_VALUE:
+                while self.speed > self.MIN_VALUE and self.not_exited:
                         self.speed -= 1
                         self.pi.set_servo_pulsewidth(ESC, self.speed)
                         
@@ -77,18 +87,17 @@ class EscControlThread(threading.Thread):
                 print ("test completed")
         def stop(self):
                 print("Stopping\n")
-                self.speed = 0
-                self.pi.set_servo_pulsewidth(ESC, self.speed)
-                self.pi.stop()
-
+                self.not_exited = False
+        
 def calibration():
         top = Toplevel()
         top.title('Calibrate')
+        top.protocol("WM_DELETE_WINDOW", disable)
 
         # Setting a wait button
         var = IntVar()
         i = 0
-        button = Button(top, text="Done", command=lambda: var.set(i))
+        button = Button(top, text="Done", command=lambda: var.set(i), font = desired_font)
         button.pack()
 
         pi.set_servo_pulsewidth(ESC, 0)
@@ -112,7 +121,7 @@ def calibration():
         print ("Wierd eh! Special tone")
 
         myLabel.config(text="Im working on it now...")
-        myLabel.update()
+        top.update()
 
         time.sleep(7)
         print ("Wait for it ....")
@@ -121,6 +130,10 @@ def calibration():
         pi.set_servo_pulsewidth(ESC, 0)
         time.sleep(2)
         print ("Arming ESC now...")
+
+        myLabel.config(text="Arming ESC now...")
+        top.update()
+
         pi.set_servo_pulsewidth(ESC, min_value)
         time.sleep(1)
         print ("See.... uhhhhh")
@@ -128,7 +141,7 @@ def calibration():
         myLabel.config(text="I think it is done now...")
 
         button.destroy()
-        button = Button(top, text="close window", command=top.destroy).pack()
+        button = Button(top, text="close window", command=top.destroy, font = desired_font).pack()
         
 
 
@@ -150,10 +163,10 @@ def control():
         # Setting a wait button
         var = IntVar()
         i = 0
-        button = Button(top, text="Yes", command=lambda: var.set(i))
+        button = Button(top, text="Yes", command=lambda: var.set(i), font = desired_font)
         button.pack()
 
-        destroy_button = Button(top, text="close window", command=destroy_control).pack()
+        destroy_button = Button(top, text="close window", command=destroy_control, font = desired_font).pack()
         
         print ("I'm Starting the motor, I hope its calibrated and armed, if not restart by giving 'x'")
 
@@ -187,13 +200,13 @@ def control():
                 myspeedLabel.config(text = str_label)
 
 
-        ten_decrease_button = Button(top, text="<<", command=lambda: set_esc(speed.get()-100))
+        ten_decrease_button = Button(top, text="<<", command=lambda: set_esc(speed.get()-100), font = desired_font)
         ten_decrease_button.pack()
-        one_decrease_button = Button(top, text="<", command=lambda: set_esc(speed.get()-10))
+        one_decrease_button = Button(top, text="<", command=lambda: set_esc(speed.get()-10), font = desired_font)
         one_decrease_button.pack()
-        one_increase_button = Button(top, text=">", command=lambda: set_esc(speed.get()+10))
+        one_increase_button = Button(top, text=">", command=lambda: set_esc(speed.get()+10), font = desired_font)
         one_increase_button.pack()
-        ten_increase_button = Button(top, text=">>", command=lambda: set_esc(speed.get()+100))
+        ten_increase_button = Button(top, text=">>", command=lambda: set_esc(speed.get()+100), font = desired_font)
         ten_increase_button.pack()
 
         str_label = "speed = " + str((speed.get()-1000)/10) + "%"
@@ -222,10 +235,10 @@ def test():
         # Setting a wait button
         var = IntVar()
         i = 0
-        button = Button(top, text="Start", command=lambda: var.set(i))
+        button = Button(top, text="Start", command=lambda: var.set(i), font = desired_font)
         button.pack()
 
-        destroy_button = Button(top, text="close window")
+        destroy_button = Button(top, text="close window", font = desired_font)
         destroy_button.pack()
 
         #Waiting for test selection
@@ -253,7 +266,7 @@ def test():
 
         destroy_button.config(command=destroy_test)
 
-        while True:
+        while top.winfo_exists() == TRUE:
                 try:
                         i=i+1
                         now = datetime.now()
@@ -274,13 +287,12 @@ def test():
                         exit()
 
 
-cal_button = Button(root, text="Calibrate", command=calibration).pack()
-manual_button = Button(root, text="Manual Control", command=control).pack()
-test_button = Button(root, text="Test (Datalogging)", command=test).pack()
-destroy_root_button = Button(root, text="close window", command=root.destroy)
+cal_button = Button(root, text="Calibrate", command=calibration, font = desired_font).pack()
+manual_button = Button(root, text="Manual Control", command=control, font = desired_font).pack()
+test_button = Button(root, text="Test (Datalogging)", command=test, font = desired_font).pack()
+destroy_root_button = Button(root, text="close window", command=root.destroy, font = desired_font).pack()
 
-
-
+root.protocol("WM_DELETE_WINDOW", disable)
 
 
 mainloop()
