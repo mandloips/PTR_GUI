@@ -258,7 +258,7 @@ def test():
                         i=i+1
                         now = datetime.now()
                         # ADC_Value = ADC.ADS1256_GetAll()
-                        if not file.closed():
+                        if file.closed == False:
                                 file.write(str(now)+","+str('sensor.get_ambient()')+","+str('sensor.get_object_1()')+","+str('hx.get_weight(5)')+","+str('0.00125*swapper(bus.read_word_data(0x41, 0x02))')+","+str('164.0*swapper(bus.read_word_data(0x41, 0x04))/32768.0')+","+str('25.0*164.0*swapper(bus.read_word_data(0x41, 0x03))/32768.0')+","+str('rpm')+","+str(esc_control_thread.speed)+","+test_label+"\n")
                                 file.flush()
                         top.update()
@@ -277,6 +277,7 @@ def test():
 cal_button = Button(root, text="Calibrate", command=calibration).pack()
 manual_button = Button(root, text="Manual Control", command=control).pack()
 test_button = Button(root, text="Test (Datalogging)", command=test).pack()
+destroy_root_button = Button(root, text="close window", command=root.destroy)
 
 
 
