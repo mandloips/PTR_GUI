@@ -8,6 +8,7 @@ from tkinter.font import Font
 import pigpio
 import threading
 import RPi.GPIO as GPIO
+import data_collection
 from time import sleep
 from datetime import datetime
 from smbus2 import SMBus
@@ -36,58 +37,6 @@ desired_font = font.Font(size = 25)
 label = Label(root, text = "Hello UMTian", font = desired_font)
 label.pack(padx = 5, pady = 5)
 
-#ESC Control Thread
-class DataCollection(threading.Thread):
-        MAX_VALUE = 1200        # if you are changing here then change for calibration too
-        MIN_VALUE = 1000        # if you are changing here then change for calibration too
-        speed = 0       
-        def __init__(self):
-                threading.Thread.__init__(self)
-                self.speed = 0
-                self.pi = pigpio.pi();
-                self.pi.set_servo_pulsewidth(ESC, self.speed)
-                self.not_exited = True
-        def run(self):
-                print ("I'm Starting the motor (in 3 seconds), I hope its calibrated and armed, if not stop the testing")
-                time.sleep(3)
-                print ("test started")
-
-                # initiating the motor
-                self.speed = self.MIN_VALUE
-                self.pi.set_servo_pulsewidth(ESC, self.speed)
-                print ("speed = %d for 3 seconds" % self.speed)
-                time.sleep(3)
-
-                # loop for increasing the speed
-                while self.speed < self.MAX_VALUE and self.not_exited:
-                        self.speed += 1
-                        self.pi.set_servo_pulsewidth(ESC, self.speed)
-
-                        if self.speed % 100 == 0:
-                                print ("speed = %d for 3 seconds" % self.speed)
-                                time.sleep(3)
-                        else:
-                                time.sleep(0.03)
-                
-                
-                
-                while self.speed > self.MIN_VALUE and self.not_exited:
-                        self.speed -= 1
-                        self.pi.set_servo_pulsewidth(ESC, self.speed)
-                        
-                        if self.speed % 100 == 0:
-                                print ("speed = %d for 3 seconds" % self.speed)
-                                time.sleep(3)
-                        else:
-                                time.sleep(0.03)
-        
-                self.speed = 0
-                self.pi.set_servo_pulsewidth(ESC, self.speed)
-                self.pi.stop()
-                print("i am running")
-        def stop(self):
-                print("Stopping\n")
-                self.not_exited = False
 
 class Pulse(threading.Thread):
         MAX_VALUE = 1300        # if you are changing here then change for calibration too
@@ -439,7 +388,7 @@ def test():
                 print("press ctrl+c to stop this program along with the motor")
 
                 # starting the test
-                esc_control_thread = DataCollection()
+                esc_control_thread = data_collection.DataCollection(ESC)
                 esc_control_thread.speed = 0
                 esc_control_thread.start()
 
