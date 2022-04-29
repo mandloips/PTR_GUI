@@ -4,11 +4,10 @@ import os
 import time
 import sys
 from tkinter import font
-from tkinter.font import Font
 import pigpio
 import threading
 import RPi.GPIO as GPIO
-import data_collection
+import Motor_Control.data_collection
 from time import sleep
 from datetime import datetime
 from smbus2 import SMBus
@@ -30,7 +29,6 @@ pi = pigpio.pi();
 root = Tk()
 root.title('PTR')
 # root.iconbitmap('c:/gui/codemy.ico')
-# root.option_add('*Font', 50)
 # root.geometry("200x150")
 desired_font = font.Font(size = 25)
  
@@ -388,7 +386,7 @@ def test():
                 print("press ctrl+c to stop this program along with the motor")
 
                 # starting the test
-                esc_control_thread = data_collection.DataCollection(ESC)
+                esc_control_thread = Motor_Control.data_collection.DataCollection(ESC)
                 esc_control_thread.speed = 0
                 esc_control_thread.start()
 
@@ -410,14 +408,14 @@ def test():
                                 esc_control_thread.stop()
                                 GPIO.cleanup
                                 print ("stopping esc/motor and datalogging")
-                                exit()
+                                break
                 file.close()
 
 
 cal_button = Button(root, text="Calibrate", command=calibration, font = desired_font).pack()
 manual_button = Button(root, text="Manual Control", command=control, font = desired_font).pack()
 test_button = Button(root, text="Test (Datalogging)", command=test, font = desired_font).pack()
-destroy_root_button = Button(root, text="close window", command=root.destroy, font = desired_font)
+destroy_root_button = Button(root, text="close window", command=root.destroy, font = desired_font).pack()
 
 root.protocol("WM_DELETE_WINDOW", disable)
 

@@ -1,21 +1,11 @@
 import time
 import threading
 import pigpio
+import Motor_Control.esc_control_thread
 
 #ESC Control Thread
-class DataCollection(threading.Thread):
-    MAX_VALUE = 1200        # if you are changing here then change for calibration too
-    MIN_VALUE = 1000        # if you are changing here then change for calibration too
-    speed = 0       
-    
-    def __init__(self, esc):
-        threading.Thread.__init__(self)
-        self.esc = esc
-        self.speed = 0
-        self.pi = pigpio.pi();
-        self.pi.set_servo_pulsewidth(self.esc, self.speed)
-        self.not_exited = True
-    
+class DataCollection(Motor_Control.esc_control_thread.ESCControlThread):
+
     def run(self):
         print ("I'm Starting the motor (in 3 seconds), I hope its calibrated and armed, if not stop the testing")
         time.sleep(3)
@@ -48,11 +38,7 @@ class DataCollection(threading.Thread):
             else:
                 time.sleep(0.03)
     
-            self.speed = 0
-            self.pi.set_servo_pulsewidth(self.esc, self.speed)
-            self.pi.stop()
-            print("i am running")
-    
-    def stop(self):
-        print("Stopping\n")
-        self.not_exited = False
+        self.speed = 0
+        self.pi.set_servo_pulsewidth(self.esc, self.speed)
+        self.pi.stop()
+        print("i am running")
