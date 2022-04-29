@@ -417,7 +417,7 @@ def test():
 cal_button = Button(root, text="Calibrate", command=calibration, font = desired_font).pack()
 manual_button = Button(root, text="Manual Control", command=control, font = desired_font).pack()
 test_button = Button(root, text="Test (Datalogging)", command=test, font = desired_font).pack()
-destroy_root_button = Button(root, text="close window", command=root.destroy, font = desired_font).pack()
+destroy_root_button = Button(root, text="close window", command=root.destroy, font = desired_font)
 
 root.protocol("WM_DELETE_WINDOW", disable)
 
