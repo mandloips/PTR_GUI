@@ -8,11 +8,11 @@ import time
 import RPi.GPIO as GPIO
 import pigpio
 
-def calibration(ESC, min_value, max_value):
+def calibration(ESC, min_value, max_value, font_size):
         calib_toplevel = Toplevel()
         calib_toplevel.title('Calibrate')
         calib_toplevel.protocol("WM_DELETE_WINDOW", disable)
-        desired_font = font.Font(size = 25)
+        desired_font = font.Font(size = font_size)
         pi = pigpio.pi();
 
         # Setting a wait button

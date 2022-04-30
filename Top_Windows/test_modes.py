@@ -17,11 +17,11 @@ def stop_test():
         file.close()
         esc_control_thread.stop()
 
-def test(ESC):
+def test(ESC, font_size):
         global test_toplevel
         global file
         global esc_control_thread
-        desired_font = font.Font(size = 25)
+        desired_font = font.Font(size = font_size)
 
         test_toplevel = Toplevel()
         test_toplevel.title('Test')
@@ -67,7 +67,6 @@ def test(ESC):
                 test_label = "NA"
                 if os.stat(file_path).st_size == 0:
                         file.write("timestamp,amb_temp,obj_temp,thrust,voltage,current,power,rpm,pwm,test_label\n")
-                
                 class UserExit(Exception):
                         pass
 
