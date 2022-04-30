@@ -1,6 +1,4 @@
 import time
-import threading
-import pigpio
 import Motor_Control.esc_control_thread
 
 #ESC Control Thread

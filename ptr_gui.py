@@ -12,6 +12,8 @@ from time import sleep
 from datetime import datetime
 from smbus2 import SMBus
 from mlx90614 import MLX90614
+import Top_Windows.test_modes as top_test
+import Top_Windows.calibration as top_calib
 
 from tkinter import *
 
@@ -34,163 +36,6 @@ desired_font = font.Font(size = 25)
  
 label = Label(root, text = "Hello UMTian", font = desired_font)
 label.pack(padx = 5, pady = 5)
-
-
-class Pulse(threading.Thread):
-        MAX_VALUE = 1300        # if you are changing here then change for calibration too
-        MIN_VALUE = 1000        # if you are changing here then change for calibration too
-        speed = 0       
-        def __init__(self):
-                threading.Thread.__init__(self)
-                self.speed = 0
-                self.pi = pigpio.pi();
-                self.pi.set_servo_pulsewidth(ESC, self.speed)
-                self.not_exited = True
-        def run(self):
-                print ("I'm Starting the motor (in 3 seconds), I hope its calibrated and armed, if not stop the testing")
-                time.sleep(3)
-                print ("test started")
-
-                # initiating the motor
-                self.speed = self.MIN_VALUE
-                self.pi.set_servo_pulsewidth(ESC, self.speed)
-                print ("speed = %d for 3 seconds" % self.speed)
-                time.sleep(3)
-
-                # loop for increasing the speed
-                while self.speed < self.MAX_VALUE and self.not_exited:
-                        self.speed += 1
-                        self.pi.set_servo_pulsewidth(ESC, self.speed)
-
-                        if self.speed % 100 == 0:
-                                print ("speed = %d for 3 seconds" % self.speed)
-                                time.sleep(3)
-                        else:
-                                time.sleep(0.03)
-                
-                
-                
-                while self.speed > self.MIN_VALUE and self.not_exited:
-                        self.speed -= 1
-                        self.pi.set_servo_pulsewidth(ESC, self.speed)
-                        
-                        if self.speed % 100 == 0:
-                                print ("speed = %d for 3 seconds" % self.speed)
-                                time.sleep(3)
-                        else:
-                                time.sleep(0.03)
-        
-                self.speed = 0
-                self.pi.set_servo_pulsewidth(ESC, self.speed)
-                self.pi.stop()
-                print("i am running")
-        def stop(self):
-                print("Stopping\n")
-                self.not_exited = False
-
-class Fifty(threading.Thread):
-        MAX_VALUE = 1200        # if you are changing here then change for calibration too
-        MIN_VALUE = 1000        # if you are changing here then change for calibration too
-        speed = 0       
-        def __init__(self):
-                threading.Thread.__init__(self)
-                self.speed = 0
-                self.pi = pigpio.pi();
-                self.pi.set_servo_pulsewidth(ESC, self.speed)
-                self.not_exited = True
-        def run(self):
-                print ("I'm Starting the motor (in 3 seconds), I hope its calibrated and armed, if not stop the testing")
-                time.sleep(3)
-                print ("test started")
-
-                # initiating the motor
-                self.speed = self.MIN_VALUE
-                self.pi.set_servo_pulsewidth(ESC, self.speed)
-                print ("speed = %d for 3 seconds" % self.speed)
-                time.sleep(3)
-
-                # loop for increasing the speed
-                while self.speed < self.MAX_VALUE and self.not_exited:
-                        self.speed += 1
-                        self.pi.set_servo_pulsewidth(ESC, self.speed)
-
-                        if self.speed % 100 == 0:
-                                print ("speed = %d for 3 seconds" % self.speed)
-                                time.sleep(3)
-                        else:
-                                time.sleep(0.03)
-                
-                
-                
-                while self.speed > self.MIN_VALUE and self.not_exited:
-                        self.speed -= 1
-                        self.pi.set_servo_pulsewidth(ESC, self.speed)
-                        
-                        if self.speed % 100 == 0:
-                                print ("speed = %d for 3 seconds" % self.speed)
-                                time.sleep(3)
-                        else:
-                                time.sleep(0.03)
-        
-                self.speed = 0
-                self.pi.set_servo_pulsewidth(ESC, self.speed)
-                self.pi.stop()
-                print("i am running")
-        def stop(self):
-                print("Stopping\n")
-                self.not_exited = False
-
-class Hundred(threading.Thread):
-        MAX_VALUE = 1200        # if you are changing here then change for calibration too
-        MIN_VALUE = 1000        # if you are changing here then change for calibration too
-        speed = 0       
-        def __init__(self):
-                threading.Thread.__init__(self)
-                self.speed = 0
-                self.pi = pigpio.pi();
-                self.pi.set_servo_pulsewidth(ESC, self.speed)
-                self.not_exited = True
-        def run(self):
-                print ("I'm Starting the motor (in 3 seconds), I hope its calibrated and armed, if not stop the testing")
-                time.sleep(3)
-                print ("test started")
-
-                # initiating the motor
-                self.speed = self.MIN_VALUE
-                self.pi.set_servo_pulsewidth(ESC, self.speed)
-                print ("speed = %d for 3 seconds" % self.speed)
-                time.sleep(3)
-
-                # loop for increasing the speed
-                while self.speed < self.MAX_VALUE and self.not_exited:
-                        self.speed += 1
-                        self.pi.set_servo_pulsewidth(ESC, self.speed)
-
-                        if self.speed % 100 == 0:
-                                print ("speed = %d for 3 seconds" % self.speed)
-                                time.sleep(3)
-                        else:
-                                time.sleep(0.03)
-                
-                
-                
-                while self.speed > self.MIN_VALUE and self.not_exited:
-                        self.speed -= 1
-                        self.pi.set_servo_pulsewidth(ESC, self.speed)
-                        
-                        if self.speed % 100 == 0:
-                                print ("speed = %d for 3 seconds" % self.speed)
-                                time.sleep(3)
-                        else:
-                                time.sleep(0.03)
-        
-                self.speed = 0
-                self.pi.set_servo_pulsewidth(ESC, self.speed)
-                self.pi.stop()
-                print("i am running")
-        def stop(self):
-                print("Stopping\n")
-                self.not_exited = False
         
 def calibration():
         top = Toplevel()
@@ -322,99 +167,11 @@ def control():
         #         pi.set_servo_pulsewidth(ESC, speed.get())
         #         print(speed.get())
 
-def destroy_test():
-        file.close()
-        esc_control_thread.stop()
-        GPIO.cleanup
-        top.destroy()
-
-def stop_test():
-        file.close()
-        esc_control_thread.stop()
-
-def test():
-        global top
-        global file
-        global esc_control_thread
-        top = Toplevel()
-        top.title('Test')
-
-        # Setting a wait button
-        var = IntVar()
-        i = 0
-        button = Button(top, text="Start", command=lambda: var.set(i), font = desired_font)
-        i = 0
-        button = Button(top, text="Start", command=lambda: var.set(i), font = desired_font)
-        button.pack()
-
-        stop_button = Button(top, text="Stop", font = desired_font)
-        stop_button.pack()
-
-        destroy_button = Button(top, text="close window", font = desired_font)
-        destroy_button.pack()
-
-        MODES = [
-                ("Data Collection Test (0% to 100%)", "DataCollection"),
-                ("Pulse Test (40% to 80%) 30 min", "Pulse"),
-                ("Constant Test (50% Test) 30 min", "Fifty"),
-                ("Constant Test (100% Test) 10 min", "Hundred"),
-        ]
-
-        selected_mode = StringVar()
-        selected_mode.set("DataCollection")
-
-        for text, choice in MODES:
-	        Radiobutton(top, text=text, variable=selected_mode, value=choice, font = desired_font).pack(anchor=W)
-
-        while True:
-                #Waiting for test selection
-                i+=1
-                button.wait_variable(var)
-
-                file_path = "/home/pi/{}_ptr_with_gui.csv".format(datetime.now().strftime('%Y-%m-%d'))
-                file = open(file_path, "a")
-                i = 0
-                j = 0
-                test_label = "NA"
-                if os.stat(file_path).st_size == 0:
-                        file.write("timestamp,amb_temp,obj_temp,thrust,voltage,current,power,rpm,pwm,test_label\n")
-                
-                class UserExit(Exception):
-                        pass
-
-                print("WARNING- This project was made by Priyansh so anything can go wrong anytime")
-                print("press ctrl+c to stop this program along with the motor")
-
-                # starting the test
-                esc_control_thread = Motor_Control.data_collection.DataCollection(ESC)
-                esc_control_thread.speed = 0
-                esc_control_thread.start()
-
-                destroy_button.config(command=destroy_test)
-                stop_button.config(command=stop_test)
-
-                while top.winfo_exists() == TRUE and esc_control_thread.is_alive() == TRUE and file.closed == False:
-                        try:
-                                i=i+1
-                                now = datetime.now()
-                                # ADC_Value = ADC.ADS1256_GetAll()
-                                file.write(str(now)+","+str('sensor.get_ambient()')+","+str('sensor.get_object_1()')+","+str('hx.get_weight(5)')+","+str('0.00125*swapper(bus.read_word_data(0x41, 0x02))')+","+str('164.0*swapper(bus.read_word_data(0x41, 0x04))/32768.0')+","+str('25.0*164.0*swapper(bus.read_word_data(0x41, 0x03))/32768.0')+","+str('rpm')+","+str(esc_control_thread.speed)+","+test_label+"\n")
-                                file.flush()
-                                top.update()
-                                time.sleep(0.05)
-                
-                        except (KeyboardInterrupt, SystemExit, UserExit):
-                                file.close()
-                                esc_control_thread.stop()
-                                GPIO.cleanup
-                                print ("stopping esc/motor and datalogging")
-                                break
-                file.close()
 
 
-cal_button = Button(root, text="Calibrate", command=calibration, font = desired_font).pack()
+cal_button = Button(root, text="Calibrate", command=lambda: top_calib.calibration(ESC, min_value, max_value), font = desired_font).pack()
 manual_button = Button(root, text="Manual Control", command=control, font = desired_font).pack()
-test_button = Button(root, text="Test (Datalogging)", command=test, font = desired_font).pack()
+test_button = Button(root, text="Test (Datalogging)", command=lambda: top_test.test(ESC), font = desired_font).pack()
 destroy_root_button = Button(root, text="close window", command=root.destroy, font = desired_font).pack()
 
 root.protocol("WM_DELETE_WINDOW", disable)
