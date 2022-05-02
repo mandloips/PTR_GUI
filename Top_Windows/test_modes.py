@@ -1,23 +1,43 @@
 import Motor_Control.data_collection
+import Motor_Control.fifty_percent
+import Motor_Control.hundred_percent
 from tkinter import *
 from tkinter import font
 from datetime import datetime
 import os
 import time
 import RPi.GPIO as GPIO
-
+import logging
+import csv
+import io
+from pathlib import Path
+class CSVFormatter(logging.Formatter):
+	def __init__(self):
+		super().__init__()
+	def format(self, record):
+		stringIO = io.StringIO()
+		writer = csv.writer(stringIO, quoting=csv.QUOTE_ALL)
+		writer.writerow(record.msg)
+		record.msg = stringIO.getvalue().strip()
+		return super().format(record)
 
 def destroy_test():
-        file.close()
         esc_control_thread.stop()
         GPIO.cleanup
         test_toplevel.destroy()
 
 def stop_test():
-        file.close()
         esc_control_thread.stop()
 
 def test(ESC, font_size):
+        FILE = Path(__file__).resolve()
+        ROOT = FILE.parents[0]
+        ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
+
+        save_dir = ROOT / 'logs'
+        if not os.path.isdir(save_dir):
+                os.mkdir(save_dir)
+
         global test_toplevel
         global file
         global esc_control_thread
@@ -60,40 +80,39 @@ def test(ESC, font_size):
                 i+=1
                 button.wait_variable(var)
 
-                file_path = "/home/pi/{}_ptr_with_gui.csv".format(datetime.now().strftime('%Y-%m-%d'))
-                file = open(file_path, "a")
+                file_name="Test_Logs-"+str(datetime.now().strftime('%Y-%m-%d-%H:%M:%S'))+'.csv'
+                logging.basicConfig(filename=save_dir / file_name,format=' %(message)s', level=logging.DEBUG)
+                logger = logging.getLogger(__name__)
+                logger.info("timestamp,amb_temp,obj_temp,thrust,voltage,current,power,rpm,pwm,test_label")
+                test_label = "NA"
+
                 i = 0
                 j = 0
-                test_label = "NA"
-                if os.stat(file_path).st_size == 0:
-                        file.write("timestamp,amb_temp,obj_temp,thrust,voltage,current,power,rpm,pwm,test_label\n")
                 class UserExit(Exception):
                         pass
-
                 print("WARNING- This project was made by Priyansh so anything can go wrong anytime")
                 print("press ctrl+c to stop this program along with the motor")
-                
 
-                esc_control_thread = Motor_Control.data_collection.DataCollection(ESC)
+                esc_control_thread = Motor_Control.hundred_percent.Hundred(ESC)
                 esc_control_thread.speed = 0
                 esc_control_thread.start()
                 destroy_button.config(command=destroy_test)
                 stop_button.config(command=stop_test)
-
-                while test_toplevel.winfo_exists() == TRUE and esc_control_thread.is_alive() == TRUE and file.closed == False:
+                while test_toplevel.winfo_exists() == TRUE and esc_control_thread.is_alive() == TRUE:
                         try:
                                 i=i+1
                                 now = datetime.now()
                                 # ADC_Value = ADC.ADS1256_GetAll()
-                                file.write(str(now)+","+str('sensor.get_ambient()')+","+str('sensor.get_object_1()')+","+str('hx.get_weight(5)')+","+str('0.00125*swapper(bus.read_word_data(0x41, 0x02))')+","+str('164.0*swapper(bus.read_word_data(0x41, 0x04))/32768.0')+","+str('25.0*164.0*swapper(bus.read_word_data(0x41, 0x03))/32768.0')+","+str('rpm')+","+str(esc_control_thread.speed)+","+test_label+"\n")
-                                file.flush()
+                                logger.info(str(now)+","+str('sensor.get_ambient()')+","+str('sensor.get_object_1()')
+                                +","+str('hx.get_weight(5)')+","+str('0.00125*swapper(bus.read_word_data(0x41, 0x02))')
+                                +","+str('164.0*swapper(bus.read_word_data(0x41, 0x04))/32768.0')+","
+                                +str('25.0*164.0*swapper(bus.read_word_data(0x41, 0x03))/32768.0')+","+str('rpm')+","
+                                +str(esc_control_thread.speed)+","+test_label+"\n")
                                 test_toplevel.update()
                                 time.sleep(0.05)
-                
+
                         except (KeyboardInterrupt, SystemExit, UserExit):
-                                file.close()
                                 esc_control_thread.stop()
                                 GPIO.cleanup
                                 print ("stopping esc/motor and datalogging")
                                 break
-                file.close()

@@ -5,10 +5,7 @@ import time
 import sys
 from tkinter import font
 import pigpio
-import threading
 import RPi.GPIO as GPIO
-import Motor_Control.data_collection
-from time import sleep
 from datetime import datetime
 from smbus2 import SMBus
 from mlx90614 import MLX90614
