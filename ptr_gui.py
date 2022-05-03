@@ -8,10 +8,9 @@ import pigpio
 import RPi.GPIO as GPIO
 from datetime import datetime
 from smbus2 import SMBus
-from mlx90614 import MLX90614
-import Top_Windows.test_modes as top_test
-import Top_Windows.calibration as top_calib
-import Top_Windows.manual_control as top_control
+import toplevel_windows.test_modes as top_test
+import toplevel_windows.calibration as top_calib
+import toplevel_windows.manual_control as top_control
 
 
 from tkinter import *

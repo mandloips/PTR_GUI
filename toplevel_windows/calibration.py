@@ -1,4 +1,4 @@
-import Motor_Control.data_collection
+import motor_control.data_collection
 from faulthandler import disable
 from tkinter import *
 from tkinter import font

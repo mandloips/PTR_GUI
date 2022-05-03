@@ -1,8 +1,8 @@
 import time
-import Motor_Control.esc_control_thread
+import motor_control.esc_control_thread
 
 #ESC Control Thread
-class Fifty(Motor_Control.esc_control_thread.ESCControlThread):
+class Fifty(motor_control.esc_control_thread.ESCControlThread):
 
     def run(self):
         self.starting()
