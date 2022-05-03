@@ -2,7 +2,7 @@ import time
 import motor_control.esc_control_thread
 
 #ESC Control Thread
-class DataCollection(motor_control.esc_control_thread.ESCControlThread):
+class StandardTest(motor_control.esc_control_thread.ESCControlThread):
 
     def run(self):
         self.starting()
