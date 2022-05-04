@@ -1,4 +1,3 @@
-import motor_control.data_collection
 from faulthandler import disable
 from tkinter import *
 from tkinter import font
@@ -12,6 +11,9 @@ def calibration(ESC, min_value, max_value, font_size):
         calib_toplevel = Toplevel()
         calib_toplevel.title('Calibrate')
         calib_toplevel.protocol("WM_DELETE_WINDOW", disable)
+
+        calib_toplevel.grab_set()
+
         desired_font = font.Font(size = font_size)
         pi = pigpio.pi();
 

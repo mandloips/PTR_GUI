@@ -1,6 +1,8 @@
 import motor_control.standard_test
 import motor_control.fifty_percent
 import motor_control.hundred_percent
+import motor_control.pulse_test
+
 import sensors_and_data.datalogging as datalogging
 import sensors_and_data.sensors as sensors
 
@@ -45,7 +47,7 @@ def test(ESC, font_size):
         destroy_button.pack()
 
         MODES = [
-                ("Data Collection Test (0% to 100%)", "DataCollection"),
+                ("Standard Test (0% to 100%) 2 min", "Standard"),
                 ("Pulse Test (40% to 80%) 30 min", "Pulse"),
                 ("Constant Test (50% Test) 30 min", "Fifty"),
                 ("Constant Test (100% Test) 10 min", "Hundred"),
@@ -55,8 +57,8 @@ def test(ESC, font_size):
         selected_mode.set("DataCollection")
 
         for text, choice in MODES:
-	        Radiobutton(test_toplevel, text=text, variable=selected_mode, value=choice, font = desired_font).pack(anchor=W)
-        
+                Radiobutton(test_toplevel, text=text, variable=selected_mode, value=choice, font = desired_font).pack(anchor=W)
+
         sensor_control = sensors.Sensors()
         sensor_control.sensors_start()
 
@@ -71,14 +73,21 @@ def test(ESC, font_size):
                 datalog.make_logfile(name)
                 print(name)
 
-                if name == "DataCollection":
+                if name == "Standard":
                         esc_control_thread = motor_control.standard_test.StandardTest(ESC)
+                        total_run_time = 5*60
                 elif name == "Pulse":
-                        esc_control_thread = motor_control.standard_test.StandardTest(ESC)
+                        esc_control_thread = motor_control.pulse_test.PulseTest(ESC)
+                        total_run_time = 30*60
                 elif name == "Fifty":
                         esc_control_thread = motor_control.fifty_percent.Fifty(ESC)
+                        total_run_time = 50
                 elif name == "Hundred":
                         esc_control_thread = motor_control.hundred_percent.Hundred(ESC)
+                        total_run_time = 5*60
+                else:
+                        esc_control_thread = motor_control.standard_test.StandardTest(ESC)
+                        total_run_time = 60
 
                 i = 0
                 print("WARNING- This project was made by Priyansh so anything can go wrong anytime")
@@ -90,7 +99,10 @@ def test(ESC, font_size):
                 destroy_button.config(command=destroy_test)
                 stop_button.config(command=stop_test)
 
-                while test_toplevel.winfo_exists() == TRUE and esc_control_thread.is_alive() == TRUE:
+                start_time = time.time()
+                end_time = start_time + total_run_time
+
+                while test_toplevel.winfo_exists() == TRUE and esc_control_thread.is_alive() == TRUE and time.time() < end_time:
                         try:
                                 i=i+1
                                 now = datetime.now()
@@ -99,13 +111,14 @@ def test(ESC, font_size):
                                 data = {}
                                 data["timestamp"] = str(now)
                                 data["amb_temp"] = 'sensor.get_ambient()'
-                                data["obj_temp"] = "sensor.get_object_1()"
+                                data["motor_temp"] = "sensor.get_object_1()"
                                 data["thrust"] = 'hx.get_weight(5)'
                                 data["voltage"] = sensor_control.voltage
                                 data["current"] = sensor_control.current
                                 data["power"] = sensor_control.power
                                 data["rpm"] = 'rpm'
                                 data["pwm"] = esc_control_thread.speed
+                                data["run_time"] = time.time() - start_time
                                 print(data)
 
                                 datalog.log_data(data)
@@ -118,3 +131,4 @@ def test(ESC, font_size):
                                 GPIO.cleanup
                                 print ("stopping esc/motor and datalogging")
                                 break
+                esc_control_thread.stop()

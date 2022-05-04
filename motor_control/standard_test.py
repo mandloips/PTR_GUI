@@ -30,4 +30,3 @@ class StandardTest(motor_control.esc_control_thread.ESCControlThread):
         self.speed = 0
         self.pi.set_servo_pulsewidth(self.esc, self.speed)
         self.pi.stop()
-        print("i am running")

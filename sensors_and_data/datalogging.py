@@ -4,7 +4,6 @@ import logging
 import json
 from datetime import datetime
 
-
 class Datalog():
 
     def make_logfile(self, name):

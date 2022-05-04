@@ -6,6 +6,7 @@ import os
 import time
 import RPi.GPIO as GPIO
 import pigpio
+import sensors_and_data.sensors as sensors
 
 def destroy_control(ESC):
         speed = 0
@@ -18,6 +19,8 @@ def control(ESC, min_value, max_value, font_size):
         control_toplevel = Toplevel()
         control_toplevel.title('Manual Control')
 
+        control_toplevel.grab_set()
+
         desired_font = font.Font(size = font_size)
 
         global pi
@@ -27,14 +30,15 @@ def control(ESC, min_value, max_value, font_size):
         var = IntVar()
         i = 0
         button = Button(control_toplevel, text="Yes", command=lambda: var.set(i), font = desired_font)
-        button.pack()
+        button.grid(row=0, column=0, columnspan=6)
 
-        destroy_button = Button(control_toplevel, text="close window", command=lambda: destroy_control(ESC), font = desired_font).pack()
+        destroy_button = Button(control_toplevel, text="close window", command=lambda: destroy_control(ESC), font = desired_font)
+        destroy_button.grid(row=1, column=0, columnspan=6)
         
         print ("I'm Starting the motor, I hope its calibrated and armed, if not restart by giving 'x'")
 
         myLabel = Label(control_toplevel, text="Press yes if the esc is calibrated, otherwise close the window")
-        myLabel.pack()
+        myLabel.grid(row=2, column=0, columnspan=6)
 
         # Waiting for button to be pressed
         i+=1
@@ -62,14 +66,46 @@ def control(ESC, min_value, max_value, font_size):
 
 
         ten_decrease_button = Button(control_toplevel, text="<<", command=lambda: set_esc(speed.get()-100), font = desired_font)
-        ten_decrease_button.pack()
+        ten_decrease_button.grid(row=3, column=0)
         one_decrease_button = Button(control_toplevel, text="<", command=lambda: set_esc(speed.get()-10), font = desired_font)
-        one_decrease_button.pack()
+        one_decrease_button.grid(row=3, column=1)
+        slight_decrease_button = Button(control_toplevel, text="<", command=lambda: set_esc(speed.get()-1), font = desired_font)
+        slight_decrease_button.grid(row=3, column=2)
+        slight_increase_button = Button(control_toplevel, text=">", command=lambda: set_esc(speed.get()+1), font = desired_font)
+        slight_increase_button.grid(row=3, column=3)
         one_increase_button = Button(control_toplevel, text=">", command=lambda: set_esc(speed.get()+10), font = desired_font)
-        one_increase_button.pack()
+        one_increase_button.grid(row=3, column=4)
         ten_increase_button = Button(control_toplevel, text=">>", command=lambda: set_esc(speed.get()+100), font = desired_font)
-        ten_increase_button.pack()
+        ten_increase_button.grid(row=3, column=5)
 
-        str_label = "speed = " + str((speed.get()-1000)/10) + "%"
-        myspeedLabel = Label(control_toplevel, text=str_label)
-        myspeedLabel.pack()
+        sensor_control = sensors.Sensors()
+        sensor_control.sensors_start()
+
+        while TRUE:
+                now = datetime.now()
+                sensor_control.sensors_data()
+                data = {}
+                data["timestamp"] = str(now)
+                data["amb_temp"] = 'sensor.get_ambient()'
+                data["motor_temp"] = "sensor.get_object_1()"
+                data["thrust"] = 'hx.get_weight(5)'
+                data["voltage"] = sensor_control.voltage
+                data["current"] = sensor_control.current
+                data["power"] = sensor_control.power
+                data["rpm"] = 'rpm'
+                data["pwm"] = speed.get()
+                data["speed"] = (speed.get()-1000)/10
+
+                speedlabel = Label(control_toplevel, text=str(data["speed"]))
+                speedlabel.grid(row=4, column=0, columnspan=6)
+
+                voltagelabel = Label(control_toplevel, text=str(data["voltage"]))
+                voltagelabel.grid(row=5, column=0, columnspan=6)
+
+                currentlabel = Label(control_toplevel, text=str(data["current"]))
+                currentlabel.grid(row=6, column=0, columnspan=6)
+
+                powerlabel = Label(control_toplevel, text=str(data["power"]))
+                powerlabel.grid(row=7, column=0, columnspan=6)
+
+                time.sleep(0.5)
