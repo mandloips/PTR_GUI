@@ -1,7 +1,16 @@
 from smbus2 import SMBus
 import RPi.GPIO as GPIO
-from hx711 import HX711
+# from hx711 import HX711
 from mlx90614 import MLX90614
+import spidev
+
+EMULATE_HX711=False
+
+if not EMULATE_HX711:
+	import RPi.GPIO as GPIO
+	from hx711 import HX711
+else:
+	from emulated_hx711 import HX711
 
 class Sensors():
 
@@ -63,11 +72,30 @@ class Sensors():
         hx.tare()
         print("Tare done! (for load cell)")
     
+    def mlx90614(self):
+        global temp_sensor
+        bus = SMBus(1)
+        temp_sensor = MLX90614(bus, address=0x5A)
+    
+    def thermistor(self):
+        global spi
+        spi_bus = 0
+        spi_device = 0
+
+        spi = spidev.SpiDev()
+        spi.open(spi_bus, spi_device)
+        spi.max_speed_hz = 200000
+
     def sensors_start(self):
         self.power_module()
+        # self.hx711_module()
+        # self.mlx90614()
 
     def sensors_data(self):
         self.voltage = 0.00125*self.swapper(bus.read_word_data(0x41, 0x02))
         self.current = 164.0*self.swapper(bus.read_word_data(0x41, 0x04))/32768.0
         self.power = 25.0*164.0*self.swapper(bus.read_word_data(0x41, 0x03))/32768.0
-
+        # self.thrust = hx.get_weight(5)
+        # self.amb_temp = sensor.get_ambient()
+        # self.motor_temp = sensor.get_object_1()
+        # self.esc_temp = spi.xfer2([1, 1])
