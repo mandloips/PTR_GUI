@@ -1,8 +1,9 @@
 from smbus2 import SMBus
 import RPi.GPIO as GPIO
-# from hx711 import HX711
+from datetime import datetime
 from mlx90614 import MLX90614
 import spidev
+import time
 
 EMULATE_HX711=False
 
@@ -50,8 +51,7 @@ class Sensors():
         return num
     
     def power_module(self):
-        global bus
-        bus = SMBus(1)
+        self.bus = SMBus(1)
 
         INA226_CONST = 0.00512
         INA226_SHUNT = 0.0005
@@ -61,41 +61,60 @@ class Sensors():
         _current_lsb = _max_current / DN_MAX
         _cal = INA226_CONST / (_current_lsb * _rshunt)
 
-        bus.write_word_data(0x41, 0x00, self.swapper(int(DN_MAX)))
-        bus.write_word_data(0x41, 0x05, self.swapper(int(_cal)))
+        self.bus.write_word_data(0x41, 0x00, self.swapper(int(DN_MAX)))
+        self.bus.write_word_data(0x41, 0x05, self.swapper(int(_cal)))
     
     def hx711_module(self):
-        hx = HX711(23, 24)
-        hx.set_reading_format("MSB", "MSB")
-        hx.set_reference_unit(231.924882629108)
-        hx.reset()
-        hx.tare()
+        self.hx = HX711(23, 24)
+        self.hx.set_reading_format("MSB", "MSB")
+        self.hx.set_reference_unit(231.924882629108)
+        self.hx.reset()
+        self.hx.tare()
         print("Tare done! (for load cell)")
     
     def mlx90614(self):
-        global temp_sensor
-        bus = SMBus(1)
-        temp_sensor = MLX90614(bus, address=0x5A)
+        self.bus = SMBus(1)
+        self.temp_sensor = MLX90614(self.bus, address=0x5A)
     
     def thermistor(self):
-        global spi
         spi_bus = 0
         spi_device = 0
 
-        spi = spidev.SpiDev()
-        spi.open(spi_bus, spi_device)
-        spi.max_speed_hz = 200000
+        self.spi = spidev.SpiDev()
+        self.spi.open(spi_bus, spi_device)
+        self.spi.max_speed_hz = 200000
 
     def sensors_start(self):
         self.power_module()
-        # self.hx711_module()
+        self.thermistor()
+        self.hx711_module()
         # self.mlx90614()
 
     def sensors_data(self):
-        self.voltage = 0.00125*self.swapper(bus.read_word_data(0x41, 0x02))
-        self.current = 164.0*self.swapper(bus.read_word_data(0x41, 0x04))/32768.0
-        self.power = 25.0*164.0*self.swapper(bus.read_word_data(0x41, 0x03))/32768.0
-        # self.thrust = hx.get_weight(5)
+        now = datetime.now()
+
+        voltage = 0.00125*self.swapper(self.bus.read_word_data(0x41, 0x02))
+        current = 164.0*self.swapper(self.bus.read_word_data(0x41, 0x04))/32768.0
+        power = 25.0*164.0*self.swapper(self.bus.read_word_data(0x41, 0x03))/32768.0
+
         # self.amb_temp = sensor.get_ambient()
         # self.motor_temp = sensor.get_object_1()
-        # self.esc_temp = spi.xfer2([1, 1])
+
+        send_bytes = [1,1]
+        rcv_bytes = self.spi.xfer2(send_bytes)
+        esc_temp = rcv_bytes[1]
+
+        thrust = self.hx.get_weight(5)
+        self.hx.power_down()
+        self.hx.power_up()
+
+        self.data = {}
+        self.data["timestamp"] = str(now)
+        self.data["amb_temp"] = "sensor.get_ambient()"
+        self.data["motor_temp"] = "sensor.get_object_1()"
+        self.data["esc_temp"] = esc_temp
+        self.data["thrust"] = thrust
+        self.data["voltage"] = voltage
+        self.data["current"] = current
+        self.data["power"] = power
+        self.data["rpm"] = "rpm"

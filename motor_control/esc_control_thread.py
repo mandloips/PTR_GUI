@@ -27,5 +27,5 @@ class ESCControlThread(threading.Thread):
         time.sleep(3)
 
     def stop(self):
-        print("Stopping\n")
+        print("Stopping esc control thread\n")
         self.not_exited = False

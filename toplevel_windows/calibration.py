@@ -29,7 +29,7 @@ def calibration(ESC, min_value, max_value, font_size):
         myLabel.pack()
 
         # Waiting for button to be pressed
-        i+=1
+        i += 1
         button.wait_variable(var)
 
         pi.set_servo_pulsewidth(ESC, max_value)
@@ -37,31 +37,27 @@ def calibration(ESC, min_value, max_value, font_size):
         myLabel.config(text="Connect the battery NOW.. enjoy the music and then press the Done button")
 
         # Waiting for button to be pressed
-        i+=1
+        i += 1
         button.wait_variable(var)
 
         pi.set_servo_pulsewidth(ESC, min_value)
-        print ("Wierd eh! Special tone")
-
         myLabel.config(text="Im working on it now...")
         calib_toplevel.update()
-
         time.sleep(7)
-        print ("Wait for it ....")
+
+        myLabel.config(text="Wait for it...")
+        calib_toplevel.update()
         time.sleep (5)
-        print ("Im working on it, DONT WORRY JUST WAIT.....")
+
         pi.set_servo_pulsewidth(ESC, 0)
         time.sleep(2)
-        print ("Arming ESC now...")
 
         myLabel.config(text="Arming ESC now...")
         calib_toplevel.update()
-
         pi.set_servo_pulsewidth(ESC, min_value)
         time.sleep(1)
-        print ("See.... uhhhhh")
 
         myLabel.config(text="I think it is done now...")
-
         button.destroy()
         button = Button(calib_toplevel, text="close window", command=calib_toplevel.destroy, font = desired_font).pack()
+        calib_toplevel.update()

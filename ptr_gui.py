@@ -21,7 +21,7 @@ import pigpio
 
 
 # Setting up parameters for ESC
-ESC=27
+ESC = 27
 max_value = 2000
 min_value = 1000
 pi = pigpio.pi();
