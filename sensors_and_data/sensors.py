@@ -92,6 +92,7 @@ class Sensors():
 
     def sensors_data(self):
         now = datetime.now()
+        print("thread is running")
 
         voltage = 0.00125*self.swapper(self.bus.read_word_data(0x41, 0x02))
         current = 164.0*self.swapper(self.bus.read_word_data(0x41, 0x04))/32768.0
@@ -118,3 +119,4 @@ class Sensors():
         self.data["current"] = current
         self.data["power"] = power
         self.data["rpm"] = "rpm"
+        # print(self.data)

@@ -13,18 +13,17 @@ import time
 import RPi.GPIO as GPIO
 
 def destroy_test():
-    esc_control_thread.stop()
+    esc_control.stop()
     GPIO.cleanup
     test_toplevel.destroy()
 
 def stop_test():
-    esc_control_thread.stop()
+    esc_control.stop()
 
 def test(ESC, font_size):
 
     global test_toplevel
-    global file
-    global esc_control_thread
+    global esc_control
     desired_font = font.Font(size = font_size)
 
     test_toplevel = Toplevel()
@@ -76,27 +75,27 @@ def test(ESC, font_size):
         print(name)
 
         if name == "Standard":
-            esc_control_thread = motor_control.standard_test.StandardTest(ESC)
+            esc_control = motor_control.standard_test.StandardTest(ESC)
             total_run_time = 5*60
         elif name == "Pulse":
-            esc_control_thread = motor_control.pulse_test.PulseTest(ESC)
+            esc_control = motor_control.pulse_test.PulseTest(ESC)
             total_run_time = 30*60
         elif name == "Fifty":
-            esc_control_thread = motor_control.fifty_percent.Fifty(ESC)
+            esc_control = motor_control.fifty_percent.Fifty(ESC)
             total_run_time = 50
         elif name == "Hundred":
-            esc_control_thread = motor_control.hundred_percent.Hundred(ESC)
+            esc_control = motor_control.hundred_percent.Hundred(ESC)
             total_run_time = 5*60
         else:
-            esc_control_thread = motor_control.standard_test.StandardTest(ESC)
+            esc_control = motor_control.standard_test.StandardTest(ESC)
             total_run_time = 60
 
         i = 0
         print("WARNING- This project was made by Priyansh so anything can go wrong anytime")
         print("press ctrl+c to stop this program along with the motor")
 
-        esc_control_thread.speed = 0
-        esc_control_thread.start()
+        esc_control.speed = 0
+        esc_control.start()
 
         destroy_button.config(command=destroy_test)
         stop_button.config(command=stop_test)
@@ -110,14 +109,14 @@ def test(ESC, font_size):
         class VoltageLow(Exception):
             pass
 
-        while test_toplevel.winfo_exists() == TRUE and esc_control_thread.is_alive() == TRUE and time.time() < end_time:
+        while test_toplevel.winfo_exists() == TRUE and esc_control.is_alive() == TRUE and time.time() < end_time:
             try:
                 i=i+1
                 now = datetime.now()
                 sensor_control.sensors_data()
                 # ADC_Value = ADC.ADS1256_GetAll()
                 data = sensor_control.data
-                data["pwm"] = esc_control_thread.speed
+                data["pwm"] = esc_control.speed
                 data["run_time"] = time.time() - start_time
                 print(data)
 
@@ -133,17 +132,17 @@ def test(ESC, font_size):
                 time.sleep(0.05)
 
             except TempHigh:
-                esc_control_thread.stop()
+                esc_control.stop()
                 print ("high temperature alert")
                 break
             
             except VoltageLow:
-                esc_control_thread.stop()
+                esc_control.stop()
                 print ("battery drain alert")
                 break
 
             except (KeyboardInterrupt, SystemExit):
-                esc_control_thread.stop()
+                esc_control.stop()
                 print ("stopping esc/motor and datalogging")
                 break
-        esc_control_thread.stop()
+        esc_control.stop()

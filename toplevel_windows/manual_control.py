@@ -2,6 +2,7 @@ from faulthandler import disable
 from tkinter import *
 from tkinter import font
 from datetime import datetime
+from threading import Thread
 import os
 import time
 import RPi.GPIO as GPIO
@@ -15,9 +16,14 @@ def destroy_control(ESC):
     pi.set_servo_pulsewidth(ESC, speed)
     control_toplevel.destroy()
 
+def sensor_data_thread():
+    while control_toplevel.winfo_exists() == TRUE:
+        sensor_control.sensors_data()
+
 
 def control(ESC, min_value, max_value, font_size):
     global control_toplevel
+    global sensor_control
     control_toplevel = Toplevel()
     control_toplevel.title('Manual Control')
 
@@ -84,8 +90,10 @@ def control(ESC, min_value, max_value, font_size):
     currentlabel.grid(row=6, column=0, columnspan=3)
     powerlabel = Label(control_toplevel, text="power = ")
     powerlabel.grid(row=7, column=0, columnspan=3)
-    thrustlabel = Label(control_toplevel, text="power = ")
+    thrustlabel = Label(control_toplevel, text="thrust = ")
     thrustlabel.grid(row=8, column=0, columnspan=3)
+    esclabel = Label(control_toplevel, text="esc temp = ")
+    esclabel.grid(row=9, column=0, columnspan=3)
 
     speedvalue = Label(control_toplevel, text="NA")
     speedvalue.grid(row=4, column=3, columnspan=3)
@@ -97,25 +105,60 @@ def control(ESC, min_value, max_value, font_size):
     powervalue.grid(row=7, column=3, columnspan=3)
     thrustvalue = Label(control_toplevel, text="NA")
     thrustvalue.grid(row=8, column=3, columnspan=3)
+    escvalue = Label(control_toplevel, text="NA")
+    escvalue.grid(row=9, column=3, columnspan=3)
 
     sensor_control = sensors.Sensors()
     sensor_control.sensors_start()
     datalog = datalogging.Datalog()
     datalog.make_logfile("Manual")
+    
+    sensor_control.sensors_data()
+    sensor_thread = Thread(target=sensor_data_thread)
+    sensor_thread.start()
+    class TempHigh(Exception):
+        pass
+
+    class VoltageLow(Exception):
+        pass
 
     while control_toplevel.winfo_exists() == TRUE:
-        sensor_control.sensors_data()
+        try:
+            data = sensor_control.data
+            data["pwm"] = speed.get()
+            data["speed"] = (speed.get()-1000)/10
 
-        data = sensor_control.data
-        data["pwm"] = speed.get()
-        data["speed"] = (speed.get()-1000)/10
+            datalog.log_data(data)
+            
+            speedvalue.config(text="%.2f" % data["speed"])
+            voltagevalue.config(text="%.2f" % data["voltage"])
+            currentvalue.config(text="%.2f" % data["current"])
+            powervalue.config(text="%.2f" % data["power"])
+            thrustvalue.config(text="%.2f" % data["thrust"])
+            escvalue.config(text="%.2f" % data["esc_temp"])
 
-        datalog.log_data(data)
+            if data["esc_temp"] > 80:
+                raise TempHigh()
+            elif data["voltage"] < 21:
+                raise VoltageLow()
+            for i in range (0,5):
+                print("i is")
+                print(i)
+                control_toplevel.update()
+                time.sleep(0.1)
         
-        speedvalue.config(text="%.2f" % data["speed"])
-        voltagevalue.config(text="%.2f" % data["voltage"])
-        currentvalue.config(text="%.2f" % data["current"])
-        powervalue.config(text="%.2f" % data["power"])
-        thrustvalue.config(text="%.2f" % data["thrust"])
+        except TempHigh:
+            set_esc(0)
+            print ("high temperature alert")
+            break
+            
+        except VoltageLow:
+            set_esc(0)
+            print ("battery drain alert")
+            break
 
-        control_toplevel.update()
+        except (KeyboardInterrupt, SystemExit):
+            set_esc(0)
+            print ("battery drain alert")
+            break
+    set_esc(0)
