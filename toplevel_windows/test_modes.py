@@ -28,6 +28,8 @@ def test(ESC, font_size):
 
     test_toplevel = Toplevel()
     test_toplevel.title('Test')
+    test_toplevel.attributes('-fullscreen', True)
+
 
     test_toplevel.grab_set()
 

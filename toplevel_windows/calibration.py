@@ -11,6 +11,8 @@ def calibration(ESC, min_value, max_value, font_size):
         calib_toplevel = Toplevel()
         calib_toplevel.title('Calibrate')
         calib_toplevel.protocol("WM_DELETE_WINDOW", disable)
+        calib_toplevel.attributes('-fullscreen', True)
+
 
         calib_toplevel.grab_set()
 

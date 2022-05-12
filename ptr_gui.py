@@ -28,6 +28,7 @@ pi = pigpio.pi();
 
 root = Tk()
 root.title('PTR')
+root.attributes('-fullscreen', True)
 # root.iconbitmap('c:/gui/codemy.ico')
 # root.geometry("200x150")
 font_size = 25

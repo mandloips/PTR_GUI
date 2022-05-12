@@ -1,4 +1,5 @@
 from faulthandler import disable
+from ossaudiodev import control_labels
 from tkinter import *
 from tkinter import font
 from datetime import datetime
@@ -26,6 +27,8 @@ def control(ESC, min_value, max_value, font_size):
     global sensor_control
     control_toplevel = Toplevel()
     control_toplevel.title('Manual Control')
+    control_toplevel.attributes('-fullscreen', True)
+
 
     control_toplevel.grab_set()
 
