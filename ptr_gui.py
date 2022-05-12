@@ -37,9 +37,16 @@ desired_font = font.Font(size = font_size)
 label = Label(root, text = "Hello UMTian", font = desired_font)
 label.pack(padx = 5, pady = 5)
 
+spacing1 = Label(root, text = "    ").pack()
 cal_button = Button(root, text="Calibrate", command=lambda: top_calib.calibration(ESC, min_value, max_value, font_size), font = desired_font).pack()
+
+spacing2 = Label(root, text = "    ").pack()
 manual_button = Button(root, text="Manual Control", command=lambda: top_control.control(ESC, min_value, max_value, font_size), font = desired_font).pack()
+
+spacing3 = Label(root, text = "    ").pack()
 test_button = Button(root, text="Test (Datalogging)", command=lambda: top_test.test(ESC, font_size), font = desired_font).pack()
+
+spacing4 = Label(root, text = "    ").pack()
 destroy_root_button = Button(root, text="close window", command=root.destroy, font = desired_font).pack()
 
 root.protocol("WM_DELETE_WINDOW", disable)
