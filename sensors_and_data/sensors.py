@@ -78,7 +78,7 @@ class Sensors():
     
     def thermistor(self):
         spi_bus = 0
-        spi_device = 2
+        spi_device = 0
 
         self.spi = spidev.SpiDev()
         self.spi.open(spi_bus, spi_device)
