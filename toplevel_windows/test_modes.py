@@ -84,7 +84,7 @@ def test(ESC, font_size):
             total_run_time = 30*60
         elif name == "Fifty":
             esc_control = motor_control.fifty_percent.Fifty(ESC)
-            total_run_time = 50
+            total_run_time = 30*60
         elif name == "Hundred":
             esc_control = motor_control.hundred_percent.Hundred(ESC)
             total_run_time = 5*60
