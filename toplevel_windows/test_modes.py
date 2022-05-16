@@ -74,7 +74,7 @@ def test(ESC, font_size):
         Radiobutton(test_toplevel, text=text, variable=selected_mode, value=choice, font = desired_font, command=lambda: test_description(selected_mode.get())).pack(anchor=W)
 
     descriptionlabel = Label(test_toplevel, text="test description: NA")
-    descriptionlabel.pack
+    descriptionlabel.pack()
 
     test_toplevel.update()
 
