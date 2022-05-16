@@ -22,25 +22,21 @@ def stop_test():
 
 def test_description(name):
     if name == "Standard":
-        descriptionlabel = Label(test_toplevel, text="This test goes from 0% to 100% [gradually] while stopping for 3 sec after every 10%")
-        descriptionlabel.pack()
+        descriptionlabel.config(text="This test goes from 0% to 100% [gradually] while stopping for 3 sec after every 10%")
     elif name == "Pulse":
-        descriptionlabel = Label(test_toplevel, text="This test goes from 40% to 80% with sudden 10% [increase] and [decrease]")
-        descriptionlabel.pack()
+        descriptionlabel.config(text="This test goes from 40% to 80% with sudden 10% [increase] and [decrease]")
     elif name == "Fifty":
-        descriptionlabel = Label(test_toplevel, text="This test goes from 0% to 50% [gradually] and then remains constant at 50%")
-        descriptionlabel.pack()
+        descriptionlabel.config(text="This test goes from 0% to 50% [gradually] and then remains constant at 50%")
     elif name == "Hundred":
-        descriptionlabel = Label(test_toplevel, text="This test goes from 0% to 100% [gradually] and then remains constant at 100%")
-        descriptionlabel.pack()
+        descriptionlabel.config(text="This test goes from 0% to 100% [gradually] and then remains constant at 100%")
     else:
-        descriptionlabel = Label(test_toplevel, text="NA")
-        descriptionlabel.pack()
+        descriptionlabel.config(test_toplevel)
 
 def test(ESC, font_size):
 
     global test_toplevel
     global esc_control
+    global descriptionlabel
     desired_font = font.Font(size = font_size)
 
     test_toplevel = Toplevel()
@@ -76,6 +72,9 @@ def test(ESC, font_size):
 
     for text, choice in MODES:
         Radiobutton(test_toplevel, text=text, variable=selected_mode, value=choice, font = desired_font, command=lambda: test_description(selected_mode.get())).pack(anchor=W)
+
+    descriptionlabel = Label(test_toplevel, text="test description: NA")
+    descriptionlabel.pack
 
     test_toplevel.update()
 
