@@ -27,6 +27,7 @@ class StandardTest(motor_control.esc_control_thread.ESCControlThread):
             else:
                 time.sleep(0.03)
     
-        self.speed = 0
-        self.pi.set_servo_pulsewidth(self.esc, self.speed)
-        self.pi.stop()
+        if self.not_exited:
+            self.speed = 0
+            self.pi.set_servo_pulsewidth(self.esc, self.speed)
+            self.pi.stop()

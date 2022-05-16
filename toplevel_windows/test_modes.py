@@ -20,6 +20,23 @@ def destroy_test():
 def stop_test():
     esc_control.stop()
 
+def test_description(name):
+    if name == "Standard":
+        descriptionlabel = Label(test_toplevel, text="This test goes from 0% to 100% [gradually] while stopping for 3 sec after every 10%")
+        descriptionlabel.pack()
+    elif name == "Pulse":
+        descriptionlabel = Label(test_toplevel, text="This test goes from 40% to 80% with sudden 10% [increase] and [decrease]")
+        descriptionlabel.pack()
+    elif name == "Fifty":
+        descriptionlabel = Label(test_toplevel, text="This test goes from 0% to 50% [gradually] and then remains constant at 50%")
+        descriptionlabel.pack()
+    elif name == "Hundred":
+        descriptionlabel = Label(test_toplevel, text="This test goes from 0% to 100% [gradually] and then remains constant at 100%")
+        descriptionlabel.pack()
+    else:
+        descriptionlabel = Label(test_toplevel, text="NA")
+        descriptionlabel.pack()
+
 def test(ESC, font_size):
 
     global test_toplevel
@@ -48,17 +65,17 @@ def test(ESC, font_size):
     destroy_button.pack()
 
     MODES = [
-        ("Standard Test (0% to 100%) 2 min", "Standard"),
-        ("Pulse Test (40% to 80%) 30 min", "Pulse"),
-        ("Constant Test (50% Test) 30 min", "Fifty"),
-        ("Constant Test (100% Test) 10 min", "Hundred"),
+        ("Standard Test (0% to 100%)    2 min", "Standard"),
+        ("Pulse Test (40% to 80%)       30 min", "Pulse"),
+        ("Constant Test (50% Test)      30 min", "Fifty"),
+        ("Constant Test (100% Test)     10 min", "Hundred"),
     ]
 
     selected_mode = StringVar()
     selected_mode.set("DataCollection")
 
     for text, choice in MODES:
-        Radiobutton(test_toplevel, text=text, variable=selected_mode, value=choice, font = desired_font).pack(anchor=W)
+        Radiobutton(test_toplevel, text=text, variable=selected_mode, value=choice, font = desired_font, command=lambda: test_description(selected_mode.get())).pack(anchor=W)
 
     test_toplevel.update()
 

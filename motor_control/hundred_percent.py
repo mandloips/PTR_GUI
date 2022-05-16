@@ -7,7 +7,7 @@ class Hundred(motor_control.esc_control_thread.ESCControlThread):
     def run(self):
         self.starting()
         start_time = time.time()
-        total_run_time = 5*60
+        total_run_time = 10*60
         end_time = start_time + total_run_time
         # loop for increasing the speed
         while self.speed < self.MAX_VALUE and time.time() < end_time and self.not_exited:
@@ -23,7 +23,7 @@ class Hundred(motor_control.esc_control_thread.ESCControlThread):
             print("runtime = %f" % run_time)
             time.sleep(1)
 
-    
-        self.speed = 0
-        self.pi.set_servo_pulsewidth(self.esc, self.speed)
-        self.pi.stop()
+        if self.not_exited:
+            self.speed = 0
+            self.pi.set_servo_pulsewidth(self.esc, self.speed)
+            self.pi.stop()
