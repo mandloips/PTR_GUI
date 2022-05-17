@@ -91,32 +91,38 @@ class Sensors():
         # self.mlx90614()
 
     def sensors_data(self):
-        now = datetime.now()
-        print("thread is running")
+        try:
+            now = datetime.now()
+            print("thread is running")
 
-        voltage = 0.00125*self.swapper(self.bus.read_word_data(0x41, 0x02))
-        current = 164.0*self.swapper(self.bus.read_word_data(0x41, 0x04))/32768.0
-        power = 25.0*164.0*self.swapper(self.bus.read_word_data(0x41, 0x03))/32768.0
+            voltage = 0.00125*self.swapper(self.bus.read_word_data(0x41, 0x02))
+            current = 164.0*self.swapper(self.bus.read_word_data(0x41, 0x04))/32768.0
+            power = 25.0*164.0*self.swapper(self.bus.read_word_data(0x41, 0x03))/32768.0
 
-        # self.amb_temp = sensor.get_ambient()
-        # self.motor_temp = sensor.get_object_1()
+            # self.amb_temp = sensor.get_ambient()
+            # self.motor_temp = sensor.get_object_1()
 
-        send_bytes = [1,1]
-        rcv_bytes = self.spi.xfer2(send_bytes)
-        esc_temp = rcv_bytes[1]
+            send_bytes = [1,1]
+            rcv_bytes = self.spi.xfer2(send_bytes)
+            esc_temp = rcv_bytes[1]
 
-        thrust = self.hx.get_weight(5)
-        self.hx.power_down()
-        self.hx.power_up()
+            thrust = self.hx.get_weight(5)
+            self.hx.power_down()
+            self.hx.power_up()
 
-        self.data = {}
-        self.data["timestamp"] = str(now)
-        self.data["amb_temp"] = "sensor.get_ambient()"
-        self.data["motor_temp"] = "sensor.get_object_1()"
-        self.data["esc_temp"] = esc_temp
-        self.data["thrust"] = thrust
-        self.data["voltage"] = voltage
-        self.data["current"] = current
-        self.data["power"] = power
-        self.data["rpm"] = "rpm"
-        # print(self.data)
+            self.data = {}
+            self.data["timestamp"] = str(now)
+            self.data["amb_temp"] = "sensor.get_ambient()"
+            self.data["motor_temp"] = "sensor.get_object_1()"
+            self.data["esc_temp"] = esc_temp
+            self.data["thrust"] = thrust
+            self.data["voltage"] = voltage
+            self.data["current"] = current
+            self.data["power"] = power
+            self.data["rpm"] = "rpm"
+            # print(self.data)
+            return 1
+        except:
+            print("There was some error with sensor data")
+            return 0
+
