@@ -38,6 +38,7 @@ def test(ESC, font_size):
     global esc_control
     global descriptionlabel
     desired_font = font.Font(size = font_size)
+    description_font = font.Font(size = 15)
 
     test_toplevel = Toplevel()
     test_toplevel.title('Test')
@@ -73,7 +74,7 @@ def test(ESC, font_size):
     for text, choice in MODES:
         Radiobutton(test_toplevel, text=text, variable=selected_mode, value=choice, font = desired_font, highlightcolor="cyan", command=lambda: test_description(selected_mode.get())).pack(anchor=W)
 
-    descriptionlabel = Label(test_toplevel, text="test description: NA")
+    descriptionlabel = Label(test_toplevel, text="test description: NA", font = description_font)
     descriptionlabel.pack()
 
     test_toplevel.update()
