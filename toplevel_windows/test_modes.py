@@ -71,7 +71,7 @@ def test(ESC, font_size):
     selected_mode.set("DataCollection")
 
     for text, choice in MODES:
-        Radiobutton(test_toplevel, text=text, variable=selected_mode, value=choice, font = desired_font, borderwidth=5, command=lambda: test_description(selected_mode.get())).pack(anchor=W)
+        Radiobutton(test_toplevel, text=text, variable=selected_mode, value=choice, font = desired_font, highlightcolor="light blue", command=lambda: test_description(selected_mode.get())).pack(anchor=W)
 
     descriptionlabel = Label(test_toplevel, text="test description: NA")
     descriptionlabel.pack()
