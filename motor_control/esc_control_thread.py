@@ -27,8 +27,9 @@ class ESCControlThread(threading.Thread):
         time.sleep(3)
 
     def stop(self):
-        print("Stopping esc control thread\n")
-        self.not_exited = False
-        self.speed = 0
-        self.pi.set_servo_pulsewidth(self.esc, self.speed)
-        self.pi.stop()
+        if self.not_exited:
+            print("Stopping esc control thread\n")
+            self.not_exited = False
+            self.speed = 0
+            self.pi.set_servo_pulsewidth(self.esc, self.speed)
+            self.pi.stop()
