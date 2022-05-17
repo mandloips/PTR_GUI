@@ -93,6 +93,7 @@ def test(ESC, font_size):
 
         voltagelabel.config(text="Voltage (V):    NA")
         esclabel.config(text="ESC Temp (°C):    NA")
+        test_toplevel.update()
             
         #Waiting for test selection
         i+=1
