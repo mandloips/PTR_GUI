@@ -22,13 +22,13 @@ def stop_test():
 
 def test_description(name):
     if name == "Standard":
-        descriptionlabel.config(text = "This test goes from 0% to 100% [gradually] while stopping for 3 sec after every 10%")
+        descriptionlabel.config(text = "goes from 0% to 100% [gradually] with a 3 sec interval after every 10%")
     elif name == "Pulse":
-        descriptionlabel.config(text = "This test goes from 40% to 80% with sudden 10% [increase] and [decrease]")
+        descriptionlabel.config(text = "goes from 40% to 80% with sudden 10% [increase] and [decrease]")
     elif name == "Fifty":
-        descriptionlabel.config(text = "This test goes from 0% to 50% [gradually] and then remains constant at 50%")
+        descriptionlabel.config(text = "goes from 0% to 50% [gradually] and then remains constant at 50%")
     elif name == "Hundred":
-        descriptionlabel.config(text = "This test goes from 0% to 100% [gradually] and then remains constant at 100%")
+        descriptionlabel.config(text = "goes from 0% to 100% [gradually] and then remains constant at 100%")
     else:
         descriptionlabel.config(text = "NA")
 
