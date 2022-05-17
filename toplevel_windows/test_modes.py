@@ -22,13 +22,13 @@ def stop_test():
 
 def test_description(name):
     if name == "Standard":
-        descriptionlabel.config(text = "goes from 0% to 100% [gradually] with a 3 sec interval after every 10%")
+        descriptionlabel.config(text = "Goes from 0% to 100% [gradually] with a 3 sec interval after every 10%")
     elif name == "Pulse":
-        descriptionlabel.config(text = "goes from 40% to 80% with sudden 10% [increase] and [decrease]")
+        descriptionlabel.config(text = "Goes from 40% to 80% with sudden 10% [increase] and [decrease]")
     elif name == "Fifty":
-        descriptionlabel.config(text = "goes from 0% to 50% [gradually] and then remains constant at 50%")
+        descriptionlabel.config(text = "Goes from 0% to 50% [gradually] and then remains constant at 50%")
     elif name == "Hundred":
-        descriptionlabel.config(text = "goes from 0% to 100% [gradually] and then remains constant at 100%")
+        descriptionlabel.config(text = "Goes from 0% to 100% [gradually] and then remains constant at 100%")
     else:
         descriptionlabel.config(text = "NA")
 
@@ -74,7 +74,8 @@ def test(ESC, font_size):
     for text, choice in MODES:
         Radiobutton(test_toplevel, text=text, variable=selected_mode, value=choice, font = desired_font, highlightcolor="cyan", command=lambda: test_description(selected_mode.get())).pack(anchor=W)
 
-    descriptionlabel = Label(test_toplevel, text="test description: NA", font = description_font)
+    description_heading = Label(test_toplevel, text="Test Description:", font = description_font)
+    descriptionlabel = Label(test_toplevel, text="NA", font = description_font)
     descriptionlabel.pack()
 
     test_toplevel.update()
