@@ -175,4 +175,3 @@ def test(ESC, font_size):
                 esc_control.stop()
                 print ("stopping esc/motor and datalogging")
                 break
-        esc_control.stop()
