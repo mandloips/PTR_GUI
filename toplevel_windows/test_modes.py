@@ -9,6 +9,7 @@ import sensors_and_data.sensors as sensors
 from tkinter import *
 from tkinter import font
 from datetime import datetime
+from threading import Thread
 import time
 import RPi.GPIO as GPIO
 
@@ -19,6 +20,10 @@ def destroy_test():
 
 def stop_test():
     esc_control.stop()
+
+def sensor_data_thread():
+    while control_toplevel.winfo_exists() == TRUE:
+        sensor_control.sensors_data()
 
 def test_description(name):
     if name == "Standard":
@@ -36,6 +41,7 @@ def test(ESC, font_size):
 
     global test_toplevel
     global esc_control
+    global sensor
     global descriptionlabel
     desired_font = font.Font(size = font_size)
     description_font = font.Font(size = 15)
@@ -88,6 +94,10 @@ def test(ESC, font_size):
     voltagelabel.pack()
     esclabel = Label(test_toplevel, text="ESC Temp (°C):    NA", font = description_font)
     esclabel.pack()
+
+    sensor_control.sensors_data()
+    sensor_thread = Thread(target=sensor_data_thread)
+    sensor_thread.start()
 
     while test_toplevel.winfo_exists() == TRUE:
 
