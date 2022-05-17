@@ -84,7 +84,15 @@ def test(ESC, font_size):
     sensor_control.sensors_start()
     datalog = datalogging.Datalog()
 
+    voltagelabel = Label(test_toplevel, text="Voltage (V):    NA", font = description_font)
+    voltagelabel.pack()
+    esclabel = Label(test_toplevel, text="ESC Temp (°C):    NA", font = description_font)
+    esclabel.pack()
+
     while test_toplevel.winfo_exists() == TRUE:
+
+        voltagelabel.config(text="Voltage (V):    NA")
+        esclabel.config(text="ESC Temp (°C):    NA")
             
         #Waiting for test selection
         i+=1
@@ -144,7 +152,10 @@ def test(ESC, font_size):
                 elif data["voltage"] < 21:
                         raise VoltageLow()
                 
-                print("printed")
+                voltagevalue = "" + str(data["voltage"])
+                escvalue = "" + str(data["esc_temp"])
+                voltagelabel.config(text = voltagevalue)
+                esclabel.config(text = escvalue)
                 
                 test_toplevel.update()
                 time.sleep(0.05)
