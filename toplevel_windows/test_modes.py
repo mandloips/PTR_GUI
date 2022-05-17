@@ -71,7 +71,7 @@ def test(ESC, font_size):
     selected_mode.set("DataCollection")
 
     for text, choice in MODES:
-        Radiobutton(test_toplevel, text=text, variable=selected_mode, value=choice, font = desired_font, command=lambda: test_description(selected_mode.get())).pack(anchor=W)
+        Radiobutton(test_toplevel, text=text, variable=selected_mode, value=choice, font = desired_font, borderwidth=5, command=lambda: test_description(selected_mode.get())).pack(anchor=W)
 
     descriptionlabel = Label(test_toplevel, text="test description: NA")
     descriptionlabel.pack()
@@ -109,8 +109,6 @@ def test(ESC, font_size):
             total_run_time = 60
 
         i = 0
-        print("WARNING- This project was made by Priyansh so anything can go wrong anytime")
-        print("press ctrl+c to stop this program along with the motor")
 
         esc_control.speed = 0
         esc_control.start()
