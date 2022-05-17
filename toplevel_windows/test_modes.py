@@ -152,8 +152,8 @@ def test(ESC, font_size):
                 elif data["voltage"] < 21:
                         raise VoltageLow()
                 
-                voltagevalue = "" + str(data["voltage"])
-                escvalue = "" + str(data["esc_temp"])
+                voltagevalue = "Voltage (V):    " + "%.2f" % data["voltage"]
+                escvalue = "ESC Temp (°C):  " + "%.2f" % data["esc_temp"]
                 voltagelabel.config(text = voltagevalue)
                 esclabel.config(text = escvalue)
                 
