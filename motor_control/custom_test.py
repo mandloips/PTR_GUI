@@ -1,9 +1,10 @@
 import threading
 import pigpio
 import time
+import motor_control.esc_control_thread
 
 #ESC Control Thread
-class ESCControlThread(threading.Thread):
+class CustomTest(threading.Thread):
     MAX_VALUE = 2000        # if you are changing here then change for calibration too
     MIN_VALUE = 1000        # if you are changing here then change for calibration too
     
@@ -25,6 +26,29 @@ class ESCControlThread(threading.Thread):
         self.pi.set_servo_pulsewidth(self.esc, self.speed)
         print ("speed = %d for 3 seconds" % self.speed)
         time.sleep(3)
+    
+    def run(self):
+        self.starting()
+        
+        while self.not_exited:
+
+            while self.speed < self.MIN_VALUE + 80*10 and self.not_exited:
+                self.speed += 100
+                self.pi.set_servo_pulsewidth(self.esc, self.speed)
+                print ("speed = %d for 5 seconds\n" % self.speed)
+                time.sleep(5)
+
+            while self.speed > self.MIN_VALUE + 40*10 and self.not_exited:
+                self.speed -= 100
+                self.pi.set_servo_pulsewidth(self.esc, self.speed)
+                print ("speed = %d for 5 seconds\n" % self.speed)
+                time.sleep(5)
+
+        if self.not_exited:
+            self.speed = 0
+            self.pi.set_servo_pulsewidth(self.esc, self.speed)
+            self.pi.stop()
+            print("pulse ka stop ran")
 
     def stop(self):
         if self.not_exited:

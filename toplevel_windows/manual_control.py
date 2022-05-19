@@ -137,7 +137,7 @@ def control(ESC, min_value, max_value, font_size):
             voltagevalue.config(text="%.2f" % data["voltage"])
             currentvalue.config(text="%.2f" % data["current"])
             powervalue.config(text="%.2f" % data["power"])
-            thrustvalue.config(text="data being logged")
+            thrustvalue.config(text="%.2f" % data["thrust"])
             escvalue.config(text="%.2f" % data["esc_temp"])
 
             if data["esc_temp"] > 80:
