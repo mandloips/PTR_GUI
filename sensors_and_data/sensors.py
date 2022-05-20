@@ -109,7 +109,7 @@ class Sensors():
             thrust = self.hx.get_weight(5)
             self.hx.power_down()
             self.hx.power_up()
-            time.sleep(0.1)
+            time.sleep(0.2)
 
             self.data = {}
             self.data["timestamp"] = str(now)
