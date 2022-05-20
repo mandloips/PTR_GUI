@@ -15,6 +15,7 @@ import sensors_and_data.datalogging as datalogging
 def destroy_control(ESC):
     speed = 0
     pi.set_servo_pulsewidth(ESC, speed)
+    GPIO.cleanup()
     control_toplevel.destroy()
 
 def sensor_data_thread():
