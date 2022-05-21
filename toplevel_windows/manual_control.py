@@ -6,11 +6,11 @@ from datetime import datetime
 from threading import Thread
 import os
 import time
+from tkinter import messagebox
 import RPi.GPIO as GPIO
 import pigpio
 import sensors_and_data.sensors as sensors
 import sensors_and_data.datalogging as datalogging
-
 
 def destroy_control(ESC):
     speed = 0
@@ -21,7 +21,6 @@ def destroy_control(ESC):
 def sensor_data_thread():
     while control_toplevel.winfo_exists() == TRUE:
         sensor_control.sensors_data()
-
 
 def control(ESC, min_value, max_value, font_size):
     global control_toplevel
@@ -46,7 +45,7 @@ def control(ESC, min_value, max_value, font_size):
 
     destroy_button = Button(control_toplevel, text="close window", command=lambda: destroy_control(ESC), font = desired_font)
     destroy_button.grid(row=1, column=0, columnspan=6)
-    
+
     print ("I'm Starting the motor, I hope its calibrated and armed, if not restart by giving 'x'")
 
     myLabel = Label(control_toplevel, text="Press yes if the esc is calibrated, otherwise close the window")
@@ -116,7 +115,7 @@ def control(ESC, min_value, max_value, font_size):
     sensor_control.sensors_start()
     datalog = datalogging.Datalog()
     datalog.make_logfile("Manual")
-    
+
     sensor_control.sensors_data()
     sensor_thread = Thread(target=sensor_data_thread)
     sensor_thread.start()
@@ -133,7 +132,7 @@ def control(ESC, min_value, max_value, font_size):
             data["speed"] = (speed.get()-1000)/10
 
             datalog.log_data(data)
-            
+
             speedvalue.config(text="%.2f" % data["speed"])
             voltagevalue.config(text="%.2f" % data["voltage"])
             currentvalue.config(text="%.2f" % data["current"])
@@ -150,12 +149,13 @@ def control(ESC, min_value, max_value, font_size):
                 print(i)
                 control_toplevel.update()
                 time.sleep(0.1)
-        
+
         except TempHigh:
             set_esc(0)
             print ("high temperature alert")
+            messagebox.showwarning(mes)
             break
-            
+
         except VoltageLow:
             set_esc(0)
             print ("battery drain alert")
