@@ -21,9 +21,6 @@ def destroy_test():
 def stop_test():
     esc_control.stop()
 
-def OnClick():
-    messagebox.showwarning("Warning", "ESC Temperature exceeded 80°C")
-
 def test_description(name):
     if name == "Standard":
         descriptionlabel.config(text = "Goes from 0% to 100% [gradually] with a 3 sec interval after every 10%")
@@ -77,9 +74,6 @@ def test(ESC, font_size):
 
     for text, choice in MODES:
         Radiobutton(test_toplevel, text=text, variable=selected_mode, value=choice, font = desired_font, highlightcolor="cyan", command=lambda: test_description(selected_mode.get())).pack(anchor=W)
-
-    warning_button = Button(test_toplevel, text="Start", command=OnClick)
-    warning_button.pack()
 
     description_heading = Label(test_toplevel, text="Test Description:", font = description_font).pack()
     descriptionlabel = Label(test_toplevel, text="NA", font = description_font)
@@ -157,7 +151,7 @@ def test(ESC, font_size):
                 datalog.log_data(data)
                 if data["esc_temp"] > 80:
                         raise TempHigh()
-                elif data["voltage"] < 21:
+                elif data["voltage"] < 20.5:
                         raise VoltageLow()
                 
                 voltagevalue = "Voltage (V):    " + "%.2f" % data["voltage"]
@@ -171,11 +165,13 @@ def test(ESC, font_size):
             except TempHigh:
                 esc_control.stop()
                 print ("high temperature alert")
+                messagebox.showwarning("Warning", "ESC Temperature exceeded the safe limit (80°C)")
                 break
             
             except VoltageLow:
                 esc_control.stop()
                 print ("battery drain alert")
+                messagebox.showwarning("Warning", "Battery Drained (20.5V)")
                 break
 
             except (KeyboardInterrupt, SystemExit):

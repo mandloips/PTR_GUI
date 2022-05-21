@@ -153,16 +153,17 @@ def control(ESC, min_value, max_value, font_size):
         except TempHigh:
             set_esc(0)
             print ("high temperature alert")
-            messagebox.showwarning(mes)
+            messagebox.showwarning("Warning", "ESC Temperature exceeded 80°C")
             break
 
         except VoltageLow:
             set_esc(0)
             print ("battery drain alert")
+            messagebox.showwarning("Warning", "Battery Drained (20.5V)")
             break
 
         except (KeyboardInterrupt, SystemExit):
             set_esc(0)
-            print ("battery drain alert")
+            print ("stopping the motor")
             break
     set_esc(0)
