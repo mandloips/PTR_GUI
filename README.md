@@ -4,7 +4,9 @@ A customizable and scalable **propulsion testing rig** designed to test and anal
 
 ---
 
-![Propulsion Testing Rig](images/rig_photo.jpg)
+![Propulsion Testing Rig](images/rig_image.jpg)
+
+![GUI Image](images/gui_image.jpg)
 
 ## 🚀 Objective
 
