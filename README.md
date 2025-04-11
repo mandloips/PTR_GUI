@@ -36,10 +36,11 @@ The primary aim is to develop a test rig that:
 
 ## 🛠️ Technologies Used
 
+- Fusion 360 (CAD modeling)
+- 3D Printing
+- CNC Machining (aluminum & carbon fiber components)
 - Python (sensor integration, data logging)
 - Raspberry Pi + Arduino (hardware interfacing)
-- Fusion 360 (CAD modeling)
-- CNC Machining (aluminum & carbon fiber components)
 - SPI & I2C communication protocols
 - Shell scripting (automation on Raspberry Pi)
 
