@@ -58,18 +58,7 @@ The primary aim is to develop a test rig that:
 
 ---
 
-## 📁 Repository Structure
+## 📚 Documentation
 
-```bash
-.
-├── hardware/
-│   └── CAD_models/
-│   └── rig_images/
-├── scripts/
-│   └── sensor_integration.py
-│   └── data_analysis.ipynb
-├── gui/
-│   └── touchscreen_interface/
-├── logs/
-│   └── example_data.csv
-├── README.md
+- 📄 [View Documentation (PDF)](documentation.pdf)
+
