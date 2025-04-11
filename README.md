@@ -60,7 +60,6 @@ The primary aim is to develop a test rig that:
 ## 📚 Documentation
 
 - 📄 [View Documentation (PDF)](documentation.pdf)
-- 📄 [View Documentation (PDF)](documentation.pdf)
 - Rig (Image)  
   <img src="images/rig_image.jpg" alt="Propulsion Testing Rig" width="400"/>
 - GUI (Image)  
