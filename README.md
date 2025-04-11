@@ -4,10 +4,6 @@ A customizable and scalable **propulsion testing rig** designed to test and anal
 
 ---
 
-![Propulsion Testing Rig](images/rig_image.jpg)
-
-![GUI Image](images/gui_image.png)
-
 ## 🚀 Objective
 
 The primary aim is to develop a test rig that:
@@ -63,4 +59,6 @@ The primary aim is to develop a test rig that:
 ## 📚 Documentation
 
 - 📄 [View Documentation (PDF)](documentation.pdf)
+- ![Propulsion Testing Rig](images/rig_image.jpg)
+- ![GUI Image](images/gui_image.png)
 
